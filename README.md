@@ -1,2 +1,2 @@
-# spark
+# Spark
 UEFI-based bootloader
