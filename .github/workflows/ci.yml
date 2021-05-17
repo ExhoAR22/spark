@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Install LLVM toolchain and other utilities
+        run: sudo apt install -y llvm-10 clang-10 lld-10 mtools nasm
+      # This is required due to Ubuntu's lacking packages
+      - name: Configure toolchain
+        run: |
+          sudo ln -s /usr/bin/llvm-ar-10 /usr/bin/llvm-ar
+          sudo ln -s /usr/bin/ld.lld-10 /usr/bin/ld.lld
+          sudo mv /usr/bin/clang /usr/bin/clang.old
+          sudo ln -s /usr/bin/clang-10 /usr/bin/clang
+      - name: Make for amd64
+        run: make
+      - name: Make for aarch64
+        run: make ARCH=aarch64
+      - name: Upload binaries
+        uses: actions/upload-artifact@v2.2.0
+        with:
+          name: Binaries
+          path: bin
+      - name: Upload objects
+        uses: actions/upload-artifact@v2.2.0
+        with:
+          name: Objects
+          path: obj

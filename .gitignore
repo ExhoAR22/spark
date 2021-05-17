@@ -1,0 +1,9 @@
+# Build artifacts
+/bin/
+/obj/
+
+# Visual Studio Code
+/.vscode/
+
+# CLion
+/.idea/
